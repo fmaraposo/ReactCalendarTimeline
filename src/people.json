@@ -1,0 +1,7 @@
+[
+    {"id":1456627,"agreementId":630414,"employeeName":"User1","employeeSurname":"YYY","applicationDate":"2020-12-13T23:00:00.000Z","start":"2021-01-06T08:00:00.000Z","end":"2021-01-08T16:00:00.000Z","status":"Pending","hours":"24","type":6020,"inPayslip":0,"paid":0,"payPeriodNo":null,"payPeriodYear":null,"department":1},
+
+    {"id":1546794,"agreementId":630242,"employeeName":"User2","employeeSurname":"YYY","applicationDate":"2021-01-13T23:00:00.000Z","start":"2021-12-31T08:00:00.000Z","end":"2021-12-31T16:00:00.000Z","status":"Pending","hours":"8","type":6020,"inPayslip":0,"paid":0,"payPeriodNo":null,"payPeriodYear":null,"department":2},
+
+    {"id":1546795,"agreementId":630245,"employeeName":"User3","employeeSurname":"YYY","applicationDate":"2021-01-13T23:00:00.000Z","start":"2021-12-31T08:00:00.000Z","end":"2021-12-31T16:00:00.000Z","status":"Pending","hours":"8","type":6020,"inPayslip":0,"paid":0,"payPeriodNo":null,"payPeriodYear":null,"department":2}
+]
