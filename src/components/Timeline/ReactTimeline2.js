@@ -13,14 +13,14 @@ import leave from '../../leave.json';
 import './ReactTimeline.css';
 
 const groups = [];
-for (let i = 0; i < people.length; i++) {
-  groups.push({
-    department: `${people[i].department}`,
-    id: people[i].agreementId,
+people.map((people) => {
+  return groups.push({
+    department: `${people.department}`,
+    id: people.agreementId,
     height: 30,
-    title: `${people[i].employeeName}`,
-  });
-}
+    title: `${people.employeeName}`,
+  })
+})
 
 const items = [];
 leave.map((leave) => {
@@ -29,6 +29,7 @@ leave.map((leave) => {
     id: leave.id,
     //item[i].group property must have the same id as group[i].id
     group: leave.agreementId,
+    type: leave.type,
     title: leave.type.toString(),
     start_time: moment(leave.start),
     end_time: moment(leave.end),
@@ -51,6 +52,86 @@ class ReactTimeline extends React.Component {
     console.log('State: ', this.state);
   }
 
+  itemRenderer = ({ item, timelineContext, itemContext, getItemProps, getResizeProps }) => {
+    const { left: leftResizeProps, right: rightResizeProps } = getResizeProps();
+    //Change the backgroundColor of the item once it's selected
+    const backgroundColor = itemContext.selected ? (itemContext.dragging ? "red" : item.selectedBgColor) : item.bgColor;
+    //Change the borderColor of the item once it's resized
+    const borderColor = itemContext.resizing ? "red" : item.color;
+    return (
+      <div
+        //props to style the root element of the item div
+        {...getItemProps({
+          style: {
+            backgroundColor: item.type.toString() === '6020' ? 'blue' :'red',
+            color: item.color,
+            borderColor,
+            borderStyle: "solid",
+            borderWidth: 1,
+            borderRadius: 4,
+            borderLeftWidth: itemContext.selected ? 3 : 1,
+            borderRightWidth: itemContext.selected ? 3 : 1
+          }
+        })}
+      >
+        {itemContext.useResizeHandle ? <div {...leftResizeProps} /> : null}
+
+        <div
+          style={{
+            height: itemContext.dimensions.height,
+            overflow: "hidden",
+            paddingLeft: 3,
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap"
+          }}
+        >
+          {itemContext.title}
+        </div>
+
+        {itemContext.useResizeHandle ? <div {...rightResizeProps} /> : null}
+      </div>
+    );
+  };
+
+  //Allows the items to change groups
+  handleItemMove = (itemId, dragTime, newGroupOrder) => {
+    const { items, groups } = this.state;
+
+    const group = groups[newGroupOrder];
+    
+    this.setState({
+      items: items.map(item =>
+        item.id === itemId
+          ? Object.assign({}, item, {
+              start: dragTime,
+              end: dragTime + (item.end - item.start),
+              group: group.id
+            })
+          : item
+      )
+    });
+
+    console.log("Moved", itemId, dragTime, newGroupOrder);
+  };
+
+  handleItemResize = (itemId, time, edge) => {
+    const { items } = this.state;
+    console.log('handleItemResize', edge)
+    this.setState({
+      items: items.map(item =>
+        item.id === itemId
+          ? Object.assign({}, item, {
+              start: edge === "left" ? time : item.start_time,
+              end: edge === "rigt" ? time : item.end_time,
+            })
+          : item
+      )
+    });
+
+    console.log("Resized", itemId, time, edge);
+  };
+
+
   render() {
     const { groups, items, defaultTimeStart, defaultTimeEnd } = this.state;
 
@@ -60,6 +141,11 @@ class ReactTimeline extends React.Component {
         items={items}
         defaultTimeStart={defaultTimeStart}
         defaultTimeEnd={defaultTimeEnd}
+        itemRenderer={this.itemRenderer}
+        onItemMove={this.handleItemMove}
+        onItemResize={this.handleItemResize}
+        useResizeHandle={true}
+
       >
         <TimelineHeaders className="sticky">
           <DateHeader unit="primaryHeader" />
